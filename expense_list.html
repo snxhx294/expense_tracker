@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <h2 class="text-center mb-4" data-aos="fade-down">Your Expenses <i class="fas fa-wallet"></i></h2>
+
+    <form method="get" class="mb-3">
+        <div class="row">
+            <div class="col-md-6">
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category }}" {% if request.GET.category == category %}selected{% endif %}>
+                            {{ category }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{% url 'expense_list' %}" class="btn btn-secondary"><i class="fas fa-redo"></i> Reset</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="text-center mb-3">
+        <a href="{% url 'add_expense' %}" class="btn btn-custom"><i class="fas fa-plus"></i> Add Expense</a>
+        <a href="{% url 'expense_chart' %}" class="btn btn-info ms-2"><i class="fas fa-chart-pie"></i> View Chart</a>
+    </div>
+
+    <div class="row">
+        {% for expense in expenses %}
+        <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ expense.title }}
+                        <span class="badge {% if expense.category == 'Food' %}bg-danger
+                                        {% elif expense.category == 'Transport' %}bg-warning text-dark
+                                        {% elif expense.category == 'Entertainment' %}bg-info
+                                        {% elif expense.category == 'Shopping' %}bg-success
+                                        {% elif expense.category == 'Bills' %}bg-secondary
+                                        {% else %}bg-primary{% endif %}">
+                            {{ expense.category }}
+                        </span>
+                    </h5>
+                    <p class="card-text">💰 <strong>Rs.{{ expense.amount }}</strong></p>
+                    <p class="text-muted"><i class="far fa-calendar-alt"></i> {{ expense.date }}</p>
+                    <a href="{% url 'delete_expense' expense.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No expenses found in this category.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
